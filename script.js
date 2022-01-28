@@ -3,13 +3,15 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124.0/build/three.m
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.124.0/examples/jsm/controls/OrbitControls.js'
 import { Rhino3dmLoader } from 'https://cdn.jsdelivr.net/npm/three@0.124.0/examples/jsm/loaders/3DMLoader.js'
  
-let camera, scene, raycaster, renderer
-const mouse = new THREE.Vector2()
-window.addEventListener( 'click', onClick, false);
+let scene, camera, renderer
+//const mouse = new THREE.Vector2()
+//window.addEventListener( 'click', onClick, false);
+
+const model = 'Parametric Vase.3dm'
 
 var slider_geo = document.querySelector('.slider-geo');
-var geometry = [ 'geom_01.3dm', 'geom_02.3dm', 'geom_03.3dm' ];
-var i = 0; //GEOMETRÍA ACTUAL
+var geometry = [ 'Parametric Vase.3dm' ];
+var i = 0; //GEOMETRY
 
 function prev(){
     if(i <= 0) i = geometry.length;
@@ -32,7 +34,7 @@ init()
 animate()
 
 ///////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////// INIT - ESTADO INICIAL /////////////////////////////
+/////////////////////////////// INIT - INITIAL STATE /////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 function init() {
 
@@ -40,8 +42,8 @@ function init() {
 
     // create a scene and a camera
     scene = new THREE.Scene()
-        //ESTO NO_DESAPARECE LA GEOMETRÍA//initStage.initStyle(StageStyle.TRANSPARENT);
-        //ESTO NO_FONDO BLANCO//scene.background = new THREE.Color('background-color')
+      //THIS DOES_NOT_DISAPPEAR THE GEOMETRY//initStage.initStyle(StageStyle.TRANSPARENT);
+      //THIS IS NOT_WHITE BACKGROUND//scene.background = new THREE.Color('background-color'
 
     scene.background = new THREE.Color('blue')
     camera = new THREE.PerspectiveCamera( 10, window.innerWidth / window.innerHeight, .1, 1000 )
@@ -74,7 +76,7 @@ function init() {
     const loader = new Rhino3dmLoader()
     loader.setLibraryPath( 'https://cdn.jsdelivr.net/npm/rhino3dm@0.13.0/' )
 
-    loader.load( 'geom_all.3dm', function ( object ) {
+    loader.load( 'ParametricVase.3dm', function ( object ) {
 
         document.getElementById('loader').remove()
         scene.add( object )
@@ -83,83 +85,3 @@ function init() {
     } )
 
 }
-
-///////////////////////////////////////////////////////////////////////////////////
-//////////////////////// ONCLICK - ALGO PASA AL CLICKAR ///////////////////////////
-///////////////////////////////////////////////////////////////////////////////////
-function onClick( event ) {
-
-    console.log( `click! (${event.clientX}, ${event.clientY})`)
-
-	// calculate mouse position in normalized device coordinates
-    // (-1 to +1) for both components
-
-	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1
-    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1
-    
-    raycaster.setFromCamera( mouse, camera )
-
-	// calculate objects intersecting the picking ray
-    const intersects = raycaster.intersectObjects( scene.children, true )
-
-    let container = document.getElementById( 'container' )
-    if (container) container.remove()
-
-    // reset object colours
-        // color de las geometrías que NO clickas
-    scene.traverse((child, i) => {
-        if (child.isMesh) {
-            child.material.color.set( 'white' )
-        }
-    });
-
-    if (intersects.length > 0) {
-
-        // get closest object
-            // color de la geometría que SÍ clickas
-        const object = intersects[0].object
-        console.log(object) // debug
-
-        object.material.color.set( 'deeppink' )
-
-        // get user strings
-        let data, count
-        if (object.userData.attributes !== undefined) {
-            data = object.userData.attributes.userStrings
-        } else {
-            // breps store user strings differently...
-            data = object.parent.userData.attributes.userStrings
-        }
-
-        // do nothing if no user strings
-        if ( data === undefined ) return
-
-        console.log( data )
-        
-        // create container div with table inside
-        container = document.createElement( 'div' )
-        container.id = 'container'
-        
-        const table = document.createElement( 'table' )
-        container.appendChild( table )
-
-        for ( let i = 0; i < data.length; i ++ ) {
-
-            const row = document.createElement( 'tr' )
-            row.innerHTML = `<td>${data[ i ][ 0 ]}</td><td>${data[ i ][ 1 ]}</td>`
-            table.appendChild( row )
-        }
-
-        document.body.appendChild( container )
-    }
-
-}
-
-
-function animate() {
-
-    requestAnimationFrame( animate )
-    renderer.render( scene, camera )
-
-}
-

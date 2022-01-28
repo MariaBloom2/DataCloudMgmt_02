@@ -1,8 +1,8 @@
 html{
-    background-color: blue;
+    background-color: rgb(234, 0, 255);
     color: white;
-    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    font-size: 15pt;
+    font-family:Impact, Haettenschweiler, 'Arial', sans-serif;
+    font-size: 25pt;
     text-align: center;
 
 }
@@ -14,7 +14,7 @@ html{
     right: 5px;
     margin: 10px;
     padding: 15px;
-    background-color: mediumvioletred;
+    background-color: rgb(54, 21, 199);
     color: white;
     width: 200px;
     font-family: monospace;
